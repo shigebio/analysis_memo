@@ -1,7 +1,7 @@
-# Combine results from multiple runs of Adimixture analysis
-- Prepare input files that have already been processed with Stacks(populations etc...) or PLINK in advance.
+# Combine results from multiple runs of [ADMIXTURE](https://dalexander.github.io/admixture/index.html) analysis
+- Prepare input files that have already been processed with [Stacks](https://catchenlab.life.illinois.edu/stacks/)(populations etc...) or [PLINK](https://www.cog-genomics.org/plink/) in advance.
 ## Example case: Combine the results of 100 runs with K = 1 to 12
-### 1. Run admixture analysis 100 times with K=1 to 12 in bash
+### 1. Run ADMIXTURE analysis 100 times with K=1 to 12 in bash
 <b>Note</b>
 - The value of `K in {k..K}` is set to the desired K value.
 - The value of `i in {i..I}` sets the number of cycles you want to run.
@@ -9,7 +9,7 @@
 ```bash
 for K in {k..K}; do
     for i in {i..I}; do
-        # Run Admixture and output the log. Set rondum seed with $i
+        # Run ADMIXTURE and output the log. Set rondum seed with $i
         admixture -s $i --cv {ped file name}.ped $K | tee log${K}_trial${i}.out
         # Save a Q file for each trial
         mv {ped file name}.${K}.Q {ped file name}.${K}_trial${i}.Q
@@ -21,7 +21,7 @@ done
 ## Linux
 for K in {1..12}; do
     for i in {1..100}; do
-        # Run Admixture and output the log
+        # Run ADMIXTURE and output the log
         admixture -C 0.0001 -s $i --cv=10 Admixture-input.ped $K | tee log${K}_trial${i}.out
         # Save a Q file for each trial
         mv Admixture-input.${K}.Q Admixture-input.${K}_trial${i}.Q
@@ -32,14 +32,14 @@ done
 ## macOS
 for K in $(seq 1 12); do
     for i in $(seq 1 100); do
-        # Run Admixture and output the log
+        # Run ADMIXTURE and output the log
         admixture -C 0.0001 -s $i --cv=10 Admixture-input.ped $K | tee log${K}_trial${i}.out
         # Save a Q file for each trial
         mv Admixture-input.${K}.Q Admixture-input.${K}_trial${i}.Q
     done
 done
 ```
-### 2. Summarizing multiple trials using the pophelper package in R
+### 2. Summarizing multiple trials using the [pophelper](https://www.royfrancis.com/pophelper/articles/index.html) package in [R](https://www.r-project.org/)
 ### 2-1. Road pophelper package
 ```R
 library(pophelper)
@@ -61,9 +61,29 @@ q_data <- readQ(q_files)
 ```R
 aligned_q_data <- alignK(q_data)
 ```
+Check that the ratios assigned to each cluster are consistent (may not know until the results are released).
+```R
+> print(aligned_q_data )
+$`Admixture-input.3_trial1.Q`
+   Cluster1 Cluster2 Cluster3
+1  0.000010 0.999980 0.000010
+2  0.000010 0.999980 0.000010
+・
+・
+```
 ### 2-6. Merge (average) aligned data
 ```R
 merged_q_data <- mergeQ(aligned_q_data)
+```
+Check that the values ​​are averaged for each cluster.
+```R
+> print(merged_q_data )
+$`3`
+     Cluster1   Cluster2   Cluster3
+1  0.00001018 0.99997980 0.00001002
+2  0.00001000 0.99997997 0.00001003
+・
+・
 ```
 ### 2-7. Plot merged data
 ```R
@@ -84,6 +104,18 @@ log_files <- list.files(path = "{set/your/input/data/directory}", pattern = "log
 ### 3. Create an empty data frame to store the CV error value
 ```R
 cv_errors <- data.frame(K = integer(0), trial = integer(0), cv_error = numeric(0))
+```
+Check that the values ​​are stored in `K`, `trial`, and `cv_error` as shown below.
+```R
+> print(cv_errors)
+     K trial cv_error
+1    1     1  0.67527
+2    1    10  0.67553
+3    1   100  0.67528
+4    1    11  0.67398
+5    1    12  0.67589
+・
+・
 ```
 ### 4. Read each log file and extract CV errors
 ```R
@@ -127,3 +159,4 @@ ggplot(cv_errors, aes(x = factor(K), y = cv_error)) +
   labs(x = "K", y = "CV error", title = "CV Error for Different K Values") +
   theme_minimal()
 ```
+![image](https://github.com/user-attachments/assets/1c1bb730-a4e5-4ba9-9839-828a7d0df795)
