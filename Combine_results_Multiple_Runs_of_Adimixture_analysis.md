@@ -40,24 +40,24 @@ for K in $(seq 1 12); do
 done
 ```
 ### 2. Summarizing multiple trials using the [pophelper](https://www.royfrancis.com/pophelper/articles/index.html) package in [R](https://www.r-project.org/)
-### 2-1. Road pophelper package
+#### 2-1. Road pophelper package
 ```R
 library(pophelper)
 ```
-### 2-2. Set working directory
+#### 2-2. Set working directory
 ```R
 setwd("{set/your/working/directory}")
 ```
-### 2-3. Get a list of Q files (specify a file name pattern)
+#### 2-3. Get a list of Q files (specify a file name pattern)
 ```R
 # Example：K=3
 q_files <- list.files(path = "{set/your/input/data/directory}", pattern = "{pop file name}.3_.*.Q", full.names = TRUE)
 ```
-### 2-4. Read list file
+#### 2-4. Read list file
 ```R
 q_data <- readQ(q_files)
 ```
-### 2-5. Align data by K value
+#### 2-5. Align data by K value
 ```R
 aligned_q_data <- alignK(q_data)
 ```
@@ -71,7 +71,7 @@ $`Admixture-input.3_trial1.Q`
 ・
 ・
 ```
-### 2-6. Merge (average) aligned data
+#### 2-6. Merge (average) aligned data
 ```R
 merged_q_data <- mergeQ(aligned_q_data)
 ```
@@ -85,23 +85,23 @@ $`3`
 ・
 ・
 ```
-### 2-7. Plot merged data
+#### 2-7. Plot merged data
 ```R
 plotQ(merged_q_data, exportpath = getwd())
 ```
 # Output the CV error value for each trial in a box plot
 in R
 Summarize the CV error values ​​obtained from multiple trials.
-### 1. Load the required libraries
+#### 1. Load the required libraries
 ```R
 library(ggplot2)
 library(dplyr)
 ```
-### 2. Get a list of log files (specify a file name pattern)
+#### 2. Get a list of log files (specify a file name pattern)
 ```R
 log_files <- list.files(path = "{set/your/input/data/directory}", pattern = "log\\d+_trial\\d+\\.out", full.names = TRUE)
 ```
-### 3. Create an empty data frame to store the CV error value
+#### 3. Create an empty data frame to store the CV error value
 ```R
 cv_errors <- data.frame(K = integer(0), trial = integer(0), cv_error = numeric(0))
 ```
@@ -117,7 +117,7 @@ Check that the values ​​are stored in `K`, `trial`, and `cv_error` as shown 
 ・
 ・
 ```
-### 4. Read each log file and extract CV errors
+#### 4. Read each log file and extract CV errors
 ```R
 for (file in log_files) {
     # Importing files
@@ -152,7 +152,7 @@ for (file in log_files) {
     }
 }
 ```
-### 5. Creating a box plot
+#### 5. Creating a box plot
 ```R
 ggplot(cv_errors, aes(x = factor(K), y = cv_error)) +
   geom_boxplot() +
