@@ -98,9 +98,11 @@ library(ggplot2)
 library(dplyr)
 ```
 #### 2. Get a list of log files (specify a file name pattern)
+<b>Note</b>:The `patten` argument must be edited to a regular expression that matches the name of your log file. In this example, it is written to match the log file name output by the ADMIXTURE analysis flow above.If you have followed the above flow, you may not need to make any changes.
 ```R
 log_files <- list.files(path = "{set/your/input/data/directory}", pattern = "log\\d+_trial\\d+\\.out", full.names = TRUE)
 ```
+
 #### 3. Create an empty data frame to store the CV error value
 ```R
 cv_errors <- data.frame(K = integer(0), trial = integer(0), cv_error = numeric(0))
