@@ -50,8 +50,11 @@ setwd("{set/your/working/directory}")
 ```
 #### 2-3. Get a list of Q files (specify a file name pattern)
 ```R
-# Example：K=3
-q_files <- list.files(path = "{set/your/input/data/directory}", pattern = "{pop file name}.3_.*.Q", full.names = TRUE)
+q_files <- list.files(path = "{set/your/input/data/directory}", pattern = "{pop file name}.{K value you want to summarize}_.*.Q", full.names = TRUE)
+```
+Example: K=3
+```R
+q_files <- list.files(path = "{set/your/input/data/directory}", pattern = "Admixture-input.3_.*.Q", full.names = TRUE)
 ```
 #### 2-4. Read list file
 ```R
