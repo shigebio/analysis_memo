@@ -41,6 +41,7 @@ done
 ```
 ### 2. Summarizing multiple trials using the [pong](https://github.com/ramachandran-lab/pong)
 #### 2-1. Create filemap file
+Creating filemap file program: [create_pong_map.py](https://github.com/shigebio/analysis_memo/blob/main/ADMIXTURE/create_pong_map.py)
 ```bash
 python create_pong_map.py -K {K value} -R {Number of trials} -o {Output file name}
 ```
