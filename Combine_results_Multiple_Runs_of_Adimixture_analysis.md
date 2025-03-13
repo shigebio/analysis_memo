@@ -39,59 +39,32 @@ for K in $(seq 1 12); do
     done
 done
 ```
-### 2. Summarizing multiple trials using the [pophelper](https://www.royfrancis.com/pophelper/articles/index.html) package in [R](https://www.r-project.org/)
-#### 2-1. Road pophelper package
-```R
-library(pophelper)
+### 2. Summarizing multiple trials using the [pong](https://github.com/ramachandran-lab/pong)
+#### 2-1. Create filemap file
+```bash
+python create_pong_map.py -K {K value} -R {Number of trials} -o {Output file name}
 ```
-#### 2-2. Set working directory
-```R
-setwd("{set/your/working/directory}")
+```bash
+# Example for K=1~12, Trial=100
+python create_pong_map.py -K 12 -R 100 -o admixture_runsK12R100.txt
 ```
-#### 2-3. Get a list of Q files (specify a file name pattern)
-```R
-q_files <- list.files(path = "{set/your/input/data/directory}", pattern = "{pop file name}.{K value you want to summarize}_.*.Q", full.names = TRUE)
 ```
-Example: K=3
-```R
-q_files <- list.files(path = "{set/your/input/data/directory}", pattern = "Admixture-input.3_.*.Q", full.names = TRUE)
+# Example output
+K1r1	1	./Admixture-input.1_trial1.Q
+K1r2	1	./Admixture-input.1_trial2.Q
+K1r3	1	./Admixture-input.1_trial3.Q
+K1r4	1	./Admixture-input.1_trial4.Q
 ```
-#### 2-4. Read list file
-```R
-q_data <- readQ(q_files)
+#### 2-2. Run pong
+```bash
+pong -m {filemap file name} -v
 ```
-#### 2-5. Align data by K value
-```R
-aligned_q_data <- alignK(q_data)
+```bash
+# Example 
+pong -m admixture_runsK12R100.txt -v
 ```
-Check that the ratios assigned to each cluster are consistent (may not know until the results are released).
-```R
-> print(aligned_q_data )
-$`Admixture-input.3_trial1.Q`
-   Cluster1 Cluster2 Cluster3
-1  0.000010 0.999980 0.000010
-2  0.000010 0.999980 0.000010
-・
-・
-```
-#### 2-6. Merge (average) aligned data
-```R
-merged_q_data <- mergeQ(aligned_q_data)
-```
-Check that the values ​​are averaged for each cluster.
-```R
-> print(merged_q_data )
-$`3`
-     Cluster1   Cluster2   Cluster3
-1  0.00001018 0.99997980 0.00001002
-2  0.00001000 0.99997997 0.00001003
-・
-・
-```
-#### 2-7. Plot merged data
-```R
-plotQ(merged_q_data, exportpath = getwd())
-```
+#### 2-3. Open local server
+When summerizes are completed, open [local server](http://localhost:4000).
 # Output the CV error value for each trial in a box plot
 in R
 Summarize the CV error values ​​obtained from multiple trials.
