@@ -63,7 +63,7 @@ K1r4	1	./Admixture-input.1_trial4.Q
 pong -m {filemap file name} -v
 ```
 ```bash
-# Example 
+# Example
 pong -m admixture_runsK12R100.txt -v
 ```
 #### 2-3. Open local server
@@ -103,31 +103,31 @@ Check that the values ​​are stored in `K`, `trial`, and `cv_error` as shown 
 for (file in log_files) {
     # Importing files
     lines <- readLines(file)
-    
+
     # Extract the "CV error" value
     error_match <- grep("CV error", lines, value = TRUE)
-    
+
     # Print error_match to see if the value was extracted correctly
     print(paste("error_match:", error_match))
-    
+
     if (length(error_match) > 0) {
         # Extract the "CV error" value
         cv_value <- as.numeric(sub(".*CV error.*: ([0-9.]+).*", "\\1", error_match))
-        
+
         # Check cv_value
         print(paste("cv_value:", cv_value))
-        
+
         # Extract K and trial number from file name
         file_info <- strsplit(basename(file), "_")[[1]]
-        
+
         # Extract K value
         K_value <- as.integer(sub("log(\\d+)", "\\1", file_info[1]))  # Extract "log" and numbers
         print(paste("K_value:", K_value))
-        
+
         # Extract the trial number (the number between "trial" and ".out")
         trial_value <- as.integer(sub("trial(\\d+)\\.out", "\\1", file_info[2]))  # Extract "trial" and the number
         print(paste("trial_value:", trial_value))
-        
+
         # Append the results to the data frame
         cv_errors <- rbind(cv_errors, data.frame(K = K_value, trial = trial_value, cv_error = cv_value))
     }
@@ -141,3 +141,83 @@ ggplot(cv_errors, aes(x = factor(K), y = cv_error)) +
   theme_minimal()
 ```
 ![image](https://github.com/user-attachments/assets/1c1bb730-a4e5-4ba9-9839-828a7d0df795)
+
+# Determine the best K using Evanno's ΔK method and caluculate mean log-likelihood
+#### 1. Process log files
+[process_logs.R]()
+log_likelihood_results <- process_logs("path/to/log_file/directory")
+
+#### 2. Check the number of trials for each K value
+[check_trials_per_k.R]()
+This is for confirmation purposes only, so it is not required.
+```
+trials_info <- check_trials_per_k(log_likelihood_results)
+print(trials_info_fixed)
+```
+
+#### 3. Calculation by Evanno method
+[calculate_by_evanno_method.R]()
+```
+evanno_results <- calculate_by_evanno_method(log_likelihood_results)
+print(evanno_results)
+```
+
+#### 4. Visualization
+<b>Note</b>: Requires ggplot2
+```
+if(require(ggplot2)) {
+  # Plotting of mean log-likelihood
+  p1 <- ggplot(evanno_results, aes(x = K, y = mean_loglikelihood)) +
+    geom_point() +
+    geom_line() +
+    geom_errorbar(aes(ymin = mean_loglikelihood - sd_loglikelihood,
+                     ymax = mean_loglikelihood + sd_loglikelihood), width = 0.2) +
+    labs(title = "Mean log-likelihood by K",
+         x = "K", y = "Mean L(K)") +
+    theme_minimal()
+
+  # Plot of ΔK (except K=1)
+  delta_k_plot_data <- subset(evanno_results, !is.na(delta_k) & K > 1)
+  if(nrow(delta_k_plot_data) > 0) {
+    p2 <- ggplot(delta_k_plot_data, aes(x = K, y = delta_k)) +
+      geom_point() +
+      geom_line() +
+      labs(title = "Evanno's ΔK Method",
+           x = "K", y = "ΔK") +
+      theme_minimal()
+
+    # Show both plots
+    if(require(gridExtra)) {
+      grid.arrange(p1, p2, ncol = 1)
+    } else {
+      print(p1)
+      print(p2)
+    }
+  } else {
+    print(p1)
+    warning("Not enough data to plot ΔK")
+  }
+} else {
+  # Basic plotting without ggplot2
+  par(mfrow = c(2, 1))
+  plot(evanno_results$K, evanno_results$mean_loglikelihood,
+       type = "b", xlab = "K", ylab = "Mean L(K)",
+       main = "Mean log-likelihood by K")
+
+  # Add error bars
+  arrows(evanno_results$K,
+         evanno_results$mean_loglikelihood - evanno_results$sd_loglikelihood,
+         evanno_results$K,
+         evanno_results$mean_loglikelihood + evanno_results$sd_loglikelihood,
+         length = 0.05, angle = 90, code = 3)
+
+  # Plot of ΔK (excluding K=1 and NA)
+  valid_k <- !is.na(evanno_results$delta_k) & evanno_results$K > 1
+  if(sum(valid_k) > 0) {
+    plot(evanno_results$K[valid_k], evanno_results$delta_k[valid_k],
+         type = "b", xlab = "K", ylab = "ΔK",
+         main = "Evanno's ΔK Method")
+  }
+  par(mfrow = c(1, 1))
+}
+```
