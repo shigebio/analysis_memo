@@ -1,3 +1,4 @@
+# Functions for calculating Evanno method and mean log-likelihood
 calculate_by_evanno_method <- function(results) {
   # Extract only valid data
   valid_results <- results[!is.na(results$K) & !is.na(results$loglikelihood), ]
