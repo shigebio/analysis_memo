@@ -1,4 +1,3 @@
-# USE [THIS](https://github.com/stevemussmann/admixturePipeline?tab=readme-ov-file#admixoptions)
 # Combine results from multiple runs of [ADMIXTURE](https://dalexander.github.io/admixture/index.html) analysis
 - Prepare input files that have already been processed with [Stacks](https://catchenlab.life.illinois.edu/stacks/)(populations etc...) or [PLINK](https://www.cog-genomics.org/plink/) in advance.
 ## Example case: Combine the results of 100 runs with K = 1 to 12
