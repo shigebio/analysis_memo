@@ -144,13 +144,13 @@ ggplot(cv_errors, aes(x = factor(K), y = cv_error)) +
 
 # Determine the best K using Evanno's ΔK method and caluculate mean log-likelihood
 #### 1. Process log files
-[process_logs.R](ADMIXTURE/process_logs.R)
+[process_logs.R](https://github.com/shigebio/analysis_memo/blob/main/ADMIXTURE/process_logs.R)
 ```
 log_likelihood_results <- process_logs("path/to/log_file/directory")
 ```
 
 #### 2. Check the number of trials for each K value
-[check_trials_per_k.R](ADMIXTURE/check_trials_per_k.R)
+[check_trials_per_k.R](https://github.com/shigebio/analysis_memo/blob/main/ADMIXTURE/check_trials_per_k.R)
 This is for confirmation purposes only, so it is not required.
 ```
 trials_info <- check_trials_per_k(log_likelihood_results)
@@ -158,7 +158,7 @@ print(trials_info_fixed)
 ```
 
 #### 3. Calculation by Evanno method
-[calculate_by_evanno_method.R](ADMIXTURE/calculate_by_evanno_method.R)
+[calculate_by_evanno_method.R](https://github.com/shigebio/analysis_memo/blob/main/ADMIXTURE/calculate_by_evanno_method.R))
 ```
 evanno_results <- calculate_by_evanno_method(log_likelihood_results)
 print(evanno_results)
