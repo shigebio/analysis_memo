@@ -154,12 +154,9 @@ extract_k_trial_from_filename <- function(filename) {
 }
 ```
 ```
-# ログファイルからLoglikelihoodの値とCVエラーを抽出する関数
 extract_loglikelihood <- function(file_path) {
-  # ログファイルを読み込む
   log_content <- readLines(file_path)
   
-  # 最終的なLoglikelihoodの行を見つける
   ll_line <- grep("Loglikelihood:", log_content, fixed = TRUE)
   if (length(ll_line) > 0) {
     # Loglikelihoodの値を抽出
@@ -169,10 +166,8 @@ extract_loglikelihood <- function(file_path) {
     loglikelihood <- NA
   }
   
-  # CVエラーの行を見つける
   cv_line <- grep("CV error", log_content)
   if (length(cv_line) > 0) {
-    # CVエラーの値を抽出
     cv_text <- log_content[cv_line]
     k_value <- as.numeric(gsub(".*CV error \\(K=([0-9]+)\\):.*", "\\1", cv_text))
     cv_error <- as.numeric(gsub(".*CV error \\(K=[0-9]+\\): ([0-9.]+).*", "\\1", cv_text))
