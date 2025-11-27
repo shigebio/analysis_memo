@@ -145,6 +145,7 @@ ggplot(cv_errors, aes(x = factor(K), y = cv_error)) +
 # Determine the best K using Evanno's ΔK method and caluculate mean log-likelihood
 #### 1. Process log files
 [process_logs.R](https://github.com/shigebio/analysis_memo/blob/main/ADMIXTURE/process_logs.R)
+
 Additionally, define the following functions.
 ```
 extract_k_trial_from_filename <- function(filename) {
