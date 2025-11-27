@@ -145,6 +145,46 @@ ggplot(cv_errors, aes(x = factor(K), y = cv_error)) +
 # Determine the best K using Evanno's ΔK method and caluculate mean log-likelihood
 #### 1. Process log files
 [process_logs.R](https://github.com/shigebio/analysis_memo/blob/main/ADMIXTURE/process_logs.R)
+Additionally, define the following functions.
+```
+extract_k_trial_from_filename <- function(filename) {
+  k <- as.numeric(gsub("log([0-9]+)_.*", "\\1", filename))
+  trial_value <- as.numeric(gsub("log([0-9]+)_trial([0-9]+).*", "\\2", filename))
+  return(list(K = k, trial = trial_value))
+}
+```
+```
+# ログファイルからLoglikelihoodの値とCVエラーを抽出する関数
+extract_loglikelihood <- function(file_path) {
+  # ログファイルを読み込む
+  log_content <- readLines(file_path)
+  
+  # 最終的なLoglikelihoodの行を見つける
+  ll_line <- grep("Loglikelihood:", log_content, fixed = TRUE)
+  if (length(ll_line) > 0) {
+    # Loglikelihoodの値を抽出
+    ll_text <- log_content[ll_line]
+    loglikelihood <- as.numeric(gsub(".*Loglikelihood: ([0-9.-]+).*", "\\1", ll_text))
+  } else {
+    loglikelihood <- NA
+  }
+  
+  # CVエラーの行を見つける
+  cv_line <- grep("CV error", log_content)
+  if (length(cv_line) > 0) {
+    # CVエラーの値を抽出
+    cv_text <- log_content[cv_line]
+    k_value <- as.numeric(gsub(".*CV error \\(K=([0-9]+)\\):.*", "\\1", cv_text))
+    cv_error <- as.numeric(gsub(".*CV error \\(K=[0-9]+\\): ([0-9.]+).*", "\\1", cv_text))
+  } else {
+    k_value <- NA
+    cv_error <- NA
+  }
+  
+  return(list(K = k_value, loglikelihood = loglikelihood, cv_error = cv_error))
+}
+```
+execution
 ```
 log_likelihood_results <- process_logs("path/to/log_file/directory")
 ```
@@ -154,7 +194,7 @@ log_likelihood_results <- process_logs("path/to/log_file/directory")
 This is for confirmation purposes only, so it is not required.
 ```
 trials_info <- check_trials_per_k(log_likelihood_results)
-print(trials_info_fixed)
+print(trials_info)
 ```
 
 #### 3. Calculation by Evanno method
