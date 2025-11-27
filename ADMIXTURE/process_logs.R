@@ -23,12 +23,12 @@ process_logs_improved <- function(log_dir_path, pattern = "log.*\\.out$") {
     file_k <- extracted_k_trial$K
     log_k <- extracted_data$K
 
-    # Warn if K value mismatch (for debugging)
-    if(!is.na(file_k) && !is.na(log_k) && file_k != log_k) {
-      warning(paste("K value mismatch:", file_name,
-                    "- K=" from file name, file_k,
-                    ", K=" from log content, log_k))
-    }
+    # # Warn if K value mismatch (for debugging)
+    # if(!is.na(file_k) && !is.na(log_k) && file_k != log_k) {
+    #   warning(paste("K value mismatch:", file_name,
+    #                 "- K=" from file name, file_k,
+    #                 ", K=" from log content, log_k))
+    # }
 
     # Add to result (priority is given to K value extracted from file name)
     results <- rbind(results, data.frame(
