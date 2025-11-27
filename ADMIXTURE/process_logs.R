@@ -1,5 +1,5 @@
 # Log File Processing Functions
-process_logs_improved <- function(log_dir_path, pattern = "log.*\\.out$") {
+process_logs <- function(log_dir_path, pattern = "log.*\\.out$") {
   # Get a list of log files in a directory
   log_files <- list.files(path = log_dir_path, pattern = pattern, full.names = TRUE)
 
@@ -49,3 +49,4 @@ process_logs_improved <- function(log_dir_path, pattern = "log.*\\.out$") {
 
   return(results)
 }
+
