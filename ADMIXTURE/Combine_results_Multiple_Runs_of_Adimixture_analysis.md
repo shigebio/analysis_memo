@@ -159,7 +159,6 @@ extract_loglikelihood <- function(file_path) {
   
   ll_line <- grep("Loglikelihood:", log_content, fixed = TRUE)
   if (length(ll_line) > 0) {
-    # Loglikelihoodの値を抽出
     ll_text <- log_content[ll_line]
     loglikelihood <- as.numeric(gsub(".*Loglikelihood: ([0-9.-]+).*", "\\1", ll_text))
   } else {
